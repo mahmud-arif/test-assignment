@@ -48,6 +48,11 @@ export function Products(): JSX.Element {
 		setProducts([...products, product])
 	}
 
+	const totalValue: number = productData.reduce(
+		(accumulator: number, product: Product) => accumulator + product.price * product.stock,
+		0
+	)
+
 	return (
 		<div>
 			<h2>Available Products</h2>
@@ -71,7 +76,18 @@ export function Products(): JSX.Element {
 				<AddProductForm onAddProduct={handleAddProduct} />
 			</div>
 
-			<Statistic title='Total products' value={data?.products_aggregate?.aggregate.count} />
+			<Row gutter={16}>
+				<Col span={12}>
+					<Card>
+						<Statistic title='Total products' value={productData?.length} />
+					</Card>
+				</Col>
+				<Col span={12}>
+					<Card>
+						<Statistic title='Total value' value={`$${totalValue?.toFixed(2)}`} />
+					</Card>
+				</Col>
+			</Row>
 		</div>
 	)
 }
