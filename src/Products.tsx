@@ -1,6 +1,7 @@
+import React, { useState } from "react"
 import { gql, useQuery } from "@apollo/client"
 import { Statistic, Card, Spin, Row, Col } from "antd"
-import React from "react"
+import { AddProductForm } from "./AddProductForm"
 
 interface Product {
 	id: number
@@ -29,6 +30,7 @@ const GET_PRODUCTS = gql`
 
 export function Products(): JSX.Element {
 	const { loading, error, data } = useQuery(GET_PRODUCTS)
+	const [products, setProducts] = useState<Product[]>([])
 
 	if (loading) {
 		return <Spin size='large' />
@@ -39,7 +41,12 @@ export function Products(): JSX.Element {
 		return <div>Error fetching data</div>
 	}
 
-	const productData: Product[] = data.products
+	const productData: Product[] = [...data.products, ...products]
+
+	const handleAddProduct = (product: Product) => {
+		console.log("Adding product:", product)
+		setProducts([...products, product])
+	}
 
 	return (
 		<div>
@@ -58,6 +65,12 @@ export function Products(): JSX.Element {
 					</Col>
 				))}
 			</Row>
+
+			<div style={{ marginTop: "20px" }}>
+				<h2>Add New Product</h2>
+				<AddProductForm onAddProduct={handleAddProduct} />
+			</div>
+
 			<Statistic title='Total products' value={data?.products_aggregate?.aggregate.count} />
 		</div>
 	)
